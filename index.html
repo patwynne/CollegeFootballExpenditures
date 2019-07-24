@@ -28,7 +28,6 @@
 
   <script src="https://d3js.org/d3.v4.js"></script>
 
-  <!-- Create a div where the graph will take place -->
   <div id="my_dataviz"></div>
 
   <p>The data is self reported by the individual schools to the US department of Education and is available <a href="https://ope.ed.gov/athletics">here</a>
@@ -38,7 +37,6 @@
   </p>
 
   <script>
-    // set the dimensions and margins of the graph
     var margin = {
         top: 10,
         right: 60,
@@ -49,11 +47,9 @@
       height = 725 - margin.top - margin.bottom;
 
 
-    // Read the data and compute summary statistics for each specie
     d3.csv("http://patwynne.me/Football1617_clean.csv", function(data) {
 
 
-      // Show the X scale
       var x = d3.scaleBand()
         .range([0, width])
         .domain(["Sun Belt", "MAC", "C-USA",  "Mountain West",  "AAC", "Independent",  "BIG 12","ACC", "PAC 12", "BIG TEN", "SEC" ])
@@ -61,7 +57,6 @@
         .paddingOuter(.5)
 
 
-      // Show the Y scale
       var y = d3.scaleLog()
         .domain([5, 65])
         .range([height, 0])
@@ -75,7 +70,6 @@
         .range([5, 35])
 
 
-            // append the svg object to the body of the page
       var svg = d3.select("#my_dataviz")
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -96,14 +90,11 @@
 
 
       var r = 25;
-      // create a scale that'll return a discreet value
-      // so that close y values fall in a line
       var yPtScale = y.copy()
         .range([Math.floor(y.range()[0] / r), 0])
         .interpolate(d3.interpolateRound)
         .domain(y.domain());
 
-      // bucket the data
       var ptsObj = {};
       data.forEach(function(d,i) {
         var yBucket = yPtScale(d.TOTAL_EXPENSE_ALL);
@@ -122,20 +113,19 @@
         });
       });
 
-      // determine the x position
       for (var x in ptsObj){
         for (var row in ptsObj[x]) {
-          var v = ptsObj[x][row], // array of points
-              m = v[0].cx, // mid-point
-              l = m - (((v.length / 2) * r) - r/2); // left most position based on count of points in the bucket
+          var v = ptsObj[x][row], 
+              m = v[0].cx, 
+              l = m - (((v.length / 2) * r) - r/2); 
 
           v.forEach(function(d,i){
-            d.cx = l + (r * i); // x position
+            d.cx = l + (r * i); 
           });
         }
       }
 
-      // flatten the data structure
+
       var flatData = Object.values(ptsObj)
                       .map(function(d){return Object.values(d)})
                       .flat(2);
